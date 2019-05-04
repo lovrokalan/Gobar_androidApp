@@ -97,7 +97,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         Intent intent = getIntent();
-        if(intent.getIntExtra("placeNumber", 0) == 0) {
+        if(intent.getIntExtra("placeNumber", -1) == -1) {
             locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
             locationListener = new LocationListener() {
                 @Override

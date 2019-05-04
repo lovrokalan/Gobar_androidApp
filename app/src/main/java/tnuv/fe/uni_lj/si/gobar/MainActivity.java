@@ -11,7 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -39,15 +41,40 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setAdapter(arrayAdapter);
 
+        TextView starterNotification = findViewById(R.id.starter_notification);
+        if (places.size() > 0) {
+            starterNotification.setVisibility(View.INVISIBLE);
+        }
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra("placeNumber", i);
+                intent.putExtra("placeId", i);
 
                 startActivity(intent);
             }
         });
+
+        Button buttonOpenMaps = findViewById(R.id.buttonOpenMaps);
+        buttonOpenMaps.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("placeId", -1);
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        TextView starterNotification = findViewById(R.id.starter_notification);
+        if (places.size() > 0) {
+            starterNotification.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -84,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.navigation_item_2:
-                        Toast.makeText(getApplicationContext(),"Hello Javatpoint", Toast.LENGTH_SHORT).show();
                         i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
                         break;

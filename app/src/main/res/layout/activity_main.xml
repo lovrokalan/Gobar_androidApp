@@ -2,10 +2,10 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sideMenuActivity"
-    android:id="@+id/drawerLayout">
+    tools:context=".sideMenuActivity">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,24 +14,13 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="2dp"
-            app:layout_constraintBottom_toTopOf="@+id/button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buttonOpenMaps"
             android:layout_width="0dp"
             android:layout_height="54dp"
             android:layout_marginBottom="18dp"
-            android:layout_marginEnd="19dp"
-            android:layout_marginStart="19dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
             android:background="@drawable/round_button"
             android:text="Dodaj lokacijo gobe"
             android:textAlignment="center"
@@ -40,6 +29,53 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/lokacijeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="Shranjene lokacije rastišč gob: "
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/starter_notification"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/notification_bubble_shadow"
+            android:padding="20dp"
+            android:text="Nobena lokacija še ni bila dodana.\n\n Za dodajanje trenutne lokacije uporabite gumb PLUS na zemljevidu ali pa pritisnite in zadržite lokacijo na zemljevidu, ki jo želite shraniti."
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@+id/listView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lokacijeTitle"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/buttonOpenMaps"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lokacijeTitle" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.NavigationView
@@ -49,7 +85,6 @@
         android:layout_gravity="start"
         android:background="@color/colorSecondary"
         app:itemTextColor="@color/white"
-        app:menu="@menu/side_menu">
-    </android.support.design.widget.NavigationView>
+        app:menu="@menu/side_menu"></android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

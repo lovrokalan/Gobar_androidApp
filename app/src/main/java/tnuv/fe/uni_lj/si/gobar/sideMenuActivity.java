@@ -51,13 +51,15 @@ public class sideMenuActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 switch (id) {
                     case R.id.navigation_item_1:
-                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-                        startActivity(i);
+                        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                        intent.putExtra("placeId", -1);
+
+                        startActivity(intent);
                         break;
 
                     case R.id.navigation_item_2:
-                        i = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(i);
+                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 return false;
