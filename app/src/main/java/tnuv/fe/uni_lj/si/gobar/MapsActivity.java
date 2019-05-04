@@ -47,6 +47,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     LocationListener locationListener;
     private GoogleMap mMap;
 
+    Location currentUserLocation;
+
     FloatingActionButton fab;
 
     public void centerMapOnLocation(Location location, String title) {
@@ -75,6 +77,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                currentUserLocation = lastKnownLocation;
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
@@ -87,14 +90,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnMapLongClickListener(this);
 
-        //FAButton:
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        for(int i=0; i<MainActivity.locations.size(); i++) {
+            Marker currentMarker = mMap.addMarker(new MarkerOptions().position(MainActivity.locations.get(i)).title(MainActivity.places.get(i)));
+        }
 
         Intent intent = getIntent();
         if(intent.getIntExtra("placeNumber", -1) == -1) {
@@ -102,7 +100,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-//                    centerMapOnLocation(location, "Your Location");
+//                  centerMapOnLocation(location, "Your Location");
+                    currentUserLocation = location;
                 }
 
                 @Override
@@ -124,6 +123,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                currentUserLocation = lastKnownLocation;
                 centerMapOnLocation(lastKnownLocation, "Your Location");
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -164,6 +164,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Marker currentMarker = mMap.addMarker(new MarkerOptions().position(gobasLocation).title(address));
             currentMarker.showInfoWindow();
         }
+
+        //FAButton:
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LatLng latLng  = new LatLng(currentUserLocation.getLatitude(), currentUserLocation.getLongitude());
+                saveLocation(latLng);
+            }
+        });
+
     }
 
     @Override
@@ -212,6 +223,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapLongClick(LatLng latLng) {
+        saveLocation(latLng);
+    }
+
+    public void saveLocation(LatLng latLng) {
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
         String address = "";
