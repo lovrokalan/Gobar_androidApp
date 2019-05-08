@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -49,16 +50,25 @@ public class sideMenuActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
                 int id = menuItem.getItemId();
+                Intent intent;
                 switch (id) {
                     case R.id.navigation_item_1:
-                        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                        Log.i("myTag", "blo je1");
+                        intent = new Intent(getApplicationContext(), MapsActivity.class);
                         intent.putExtra("placeId", -1);
 
                         startActivity(intent);
                         break;
 
                     case R.id.navigation_item_2:
+                        Log.i("myTag", "blo je2");
                         intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        break;
+
+                    case R.id.navigation_item_3:
+                        Log.i("myTag", "blo je3");
+                        intent = new Intent(getApplicationContext(), InfoGobeActivity.class);
                         startActivity(intent);
                         break;
                 }

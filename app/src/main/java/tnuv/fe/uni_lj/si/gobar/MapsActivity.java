@@ -211,8 +211,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         break;
 
                     case R.id.navigation_item_2:
-                        Toast.makeText(getApplicationContext(),"Hello Javatpoint", Toast.LENGTH_SHORT).show();
                         i = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(i);
+                        break;
+
+                    case R.id.navigation_item_3:
+                        i = new Intent(getApplicationContext(), InfoGobeActivity.class);
                         startActivity(i);
                         break;
                 }
@@ -230,6 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
         String address = "";
+        String date = "";
 
         try {
 
@@ -248,18 +253,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
-        if (address.equals("")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            address += sdf.format(new Date());
-        }
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        date += sdf.format(new Date());
+
 
         mMap.addMarker(new MarkerOptions().position(latLng).title(address));
 
         MainActivity.places.add(address);
         MainActivity.locations.add(latLng);
 
-        MainActivity.arrayAdapter.notifyDataSetChanged();
+//        MainActivity.arrayAdapter.notifyDataSetChanged();
 
-        Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
+        MainActivity.mName.add("ime-test");
+        MainActivity.mAdress.add(address);
+        MainActivity.mDate.add(date);
+        MainActivity.mVrsteGob.add("vrste-gob-test");
+
+        MainActivity.locationsAdapter.notifyDataSetChanged();
+
+        Toast.makeText(this, "Lokacija je shranjena!", Toast.LENGTH_SHORT).show();
     }
 }
