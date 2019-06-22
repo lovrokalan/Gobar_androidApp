@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@drawable/list_item_background"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     >
 
     <LinearLayout
@@ -11,9 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
+        android:paddingBottom="12dp"
         >
 
         <TextView
@@ -49,20 +52,20 @@
         >
 
         <TextView
-            android:id="@+id/textViewAddress"
+            android:id="@+id/textViewVrsteGob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
-            android:text="1.4 km"
+            android:text="Vrste Gob"
             android:textSize="16dp" />
 
         <TextView
-            android:id="@+id/textViewVrsteGob"
+            android:id="@+id/textViewAddress"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:gravity="right"
-            android:text="Vrste Gob:"
+            android:text="Naslov"
             android:textSize="16dp" />
 
     </LinearLayout>

@@ -1,7 +1,14 @@
 package tnuv.fe.uni_lj.si.gobar;
 
+import android.app.ActionBar;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -23,7 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.w3c.dom.Text;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,21 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
 
-    static ArrayList<String> places = new ArrayList<String>();
-    static ArrayList<LatLng> locations = new ArrayList<LatLng>();
+    static ArrayList<String> places;
+    static ArrayList<LatLng> locations;
     static ArrayAdapter arrayAdapter;
 
-    static ArrayList<String> mName = new ArrayList<String>();
-    static ArrayList<String> mDate = new ArrayList<String>();
-    static ArrayList<String> mAdress = new ArrayList<String>();
-    static ArrayList<String> mVrsteGob = new ArrayList<String>();
-
-//    String mName[] = {"Jurčki", "Lisičke", "Mušnice", "Lesne"};
-//    String mDate[] = {"12. 1. 2019", "12. 1. 2015", "1. 9. 2015", "11. 1. 2010"};
-//    String mAdress[] = {"Jurčki", "Lisičke", "Mušnice", "Lesne"};
-//    String mVrsteGob[] = {"Jurčki", "Lisičke", "Mušnice", "Lesne"};
+    static ArrayList<String> mName;
+    static ArrayList<String> mDate;
+    static ArrayList<String> mAdress;
+    static ArrayList<String> mOpisLokacije;
+    static ArrayList<String> mVrsteGob;
 
     static MyAdapter locationsAdapter;
+
+    Dialog myDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +64,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initInstances();
 
-        ListView listView = findViewById(R.id.listView);
+        loadData();
 
-//        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, places);
-//
-//        listView.setAdapter(arrayAdapter);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.gobar_logo);
+
+        myDialog = new Dialog(this);
+
+        ListView listView = findViewById(R.id.listView);
 
         TextView starterNotification = findViewById(R.id.starter_notification);
 
@@ -72,10 +87,11 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra("placeId", i);
-
-                startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+//                intent.putExtra("placeId", i);
+//
+//                startActivity(intent);
+                ShowPopup(i);
             }
         });
 
@@ -89,6 +105,175 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+
+        String json = gson.toJson(places);
+        editor.putString("places", json);
+
+        json = gson.toJson(locations);
+        editor.putString("locations", json);
+
+        json = gson.toJson(mName);
+        editor.putString("mName", json);
+
+        json = gson.toJson(mDate);
+        editor.putString("mDate", json);
+
+        json = gson.toJson(mAdress);
+        editor.putString("mAdress", json);
+
+        json = gson.toJson(mOpisLokacije);
+        editor.putString("mOpisLokacije", json);
+
+        json = gson.toJson(mVrsteGob);
+        editor.putString("mVrsteGob", json);
+
+        editor.apply();
+    }
+
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+
+        String json = sharedPreferences.getString("places", null);
+        places = gson.fromJson(json, type);
+
+        if (places == null) {
+            places = new ArrayList<String>();
+        }
+
+        json = sharedPreferences.getString("mName", null);
+        mName = gson.fromJson(json, type);
+
+        if (mName == null) {
+            mName = new ArrayList<String>();
+        }
+
+        json = sharedPreferences.getString("mAdress", null);
+        mAdress = gson.fromJson(json, type);
+
+        if (mAdress == null) {
+            mAdress = new ArrayList<String>();
+        }
+
+        json = sharedPreferences.getString("mDate", null);
+        mDate = gson.fromJson(json, type);
+
+        if (mDate == null) {
+            mDate = new ArrayList<String>();
+        }
+
+        json = sharedPreferences.getString("mVrsteGob", null);
+        mVrsteGob = gson.fromJson(json, type);
+
+        if (mVrsteGob == null) {
+            mVrsteGob = new ArrayList<String>();
+        }
+
+        json = sharedPreferences.getString("mOpisLokacije", null);
+        mOpisLokacije = gson.fromJson(json, type);
+
+        if (mOpisLokacije == null) {
+            mOpisLokacije = new ArrayList<String>();
+        }
+
+        type = new TypeToken<ArrayList<LatLng>>() {}.getType();
+        json = sharedPreferences.getString("locations", null);
+        locations = gson.fromJson(json, type);
+
+        if (locations == null) {
+            locations = new ArrayList<LatLng>();
+        }
+    }
+
+    public void ShowPopup(final int locationNumber) {
+        TextView textViewDate;
+        TextView txtclose;
+        TextView textViewNaslov;
+        TextView textViewIme;
+        TextView textViewVrste;
+        TextView textViewOpis;
+
+        myDialog.setContentView(R.layout.location_details_popup);
+
+        txtclose =(TextView) myDialog.findViewById(R.id.txtcloseBtn);
+        txtclose.setText("X");
+
+        textViewDate = (TextView) myDialog.findViewById(R.id.textViewDate);
+        textViewDate.setText(mDate.get(locationNumber));
+
+        textViewNaslov = (TextView) myDialog.findViewById(R.id.textViewNaslov);
+        textViewNaslov.setText(mAdress.get(locationNumber));
+
+        textViewIme = (TextView) myDialog.findViewById(R.id.textViewIme);
+        textViewIme.setText(mName.get(locationNumber));
+
+        textViewVrste = (TextView) myDialog.findViewById(R.id.textViewVrste);
+        textViewVrste.setText(mVrsteGob.get(locationNumber));
+
+        textViewOpis = (TextView) myDialog.findViewById(R.id.textViewOpis);
+        textViewOpis.setText(mOpisLokacije.get(locationNumber));
+
+        Button btnPrikaziMaps = (Button) myDialog.findViewById(R.id.btnPrikaziMaps);
+        btnPrikaziMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("placeId", locationNumber);
+
+                startActivity(intent);
+            }
+        });
+
+        Button btnNavigiraj = (Button) myDialog.findViewById(R.id.btnNavigiraj);
+        btnNavigiraj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("google.navigation:q="+ locations.get(locationNumber).latitude +","+ locations.get(locationNumber).longitude + "&mode=w");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                startActivity(mapIntent);
+            }
+        });
+
+        Button btnDelete = (Button) myDialog.findViewById(R.id.btnDeleteLocation);
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                places.remove(locationNumber);
+                locations.remove(locationNumber);
+                mAdress.remove(locationNumber);
+                mDate.remove(locationNumber);
+                mName.remove(locationNumber);
+                mOpisLokacije.remove(locationNumber);
+                mVrsteGob.remove(locationNumber);
+
+                locationsAdapter.notifyDataSetChanged();
+
+                myDialog.dismiss();
+            }
+        });
+
+        txtclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        myDialog.setCancelable(true);
+        myDialog.setCanceledOnTouchOutside(true);
+        myDialog.show();
     }
 
     @Override

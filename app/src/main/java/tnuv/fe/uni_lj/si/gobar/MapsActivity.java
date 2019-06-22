@@ -1,9 +1,13 @@
 package tnuv.fe.uni_lj.si.gobar;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,6 +25,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -28,10 +36,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,6 +61,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     FloatingActionButton fab;
 
+    Dialog addLocationPopUp;
+    EditText editTextImeLokacije;
+    EditText editTextOpis;
+    EditText editTextVrsteGob;
+    String address;
+    String date;
+
     public void centerMapOnLocation(Location location, String title) {
         if(location != null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -62,11 +79,44 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        addLocationPopUp = new Dialog(this);
         initInstances();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+
+        String json = gson.toJson(MainActivity.places);
+        editor.putString("places", json);
+
+        json = gson.toJson(MainActivity.locations);
+        editor.putString("locations", json);
+
+        json = gson.toJson(MainActivity.mName);
+        editor.putString("mName", json);
+
+        json = gson.toJson(MainActivity.mDate);
+        editor.putString("mDate", json);
+
+        json = gson.toJson(MainActivity.mAdress);
+        editor.putString("mAdress", json);
+
+        json = gson.toJson(MainActivity.mOpisLokacije);
+        editor.putString("mOpisLokacije", json);
+
+        json = gson.toJson(MainActivity.mVrsteGob);
+        editor.putString("mVrsteGob", json);
+
+        editor.apply();
     }
 
     @Override
@@ -90,11 +140,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnMapLongClickListener(this);
 
+        Intent intent = getIntent();
+
         for(int i=0; i<MainActivity.locations.size(); i++) {
-            Marker currentMarker = mMap.addMarker(new MarkerOptions().position(MainActivity.locations.get(i)).title(MainActivity.places.get(i)));
+
+            Marker currentMarker = mMap.addMarker(new MarkerOptions()
+                    .position(MainActivity.locations.get(i))
+                    .icon(getMarkerIcon("#847862"))
+                    .title(MainActivity.places.get(i) + " " + MainActivity.mDate.get(i))
+                    .snippet(MainActivity.mVrsteGob.get(i)));
+
+            if(intent.getIntExtra("placeNumber", -1) == i) {
+                currentMarker.showInfoWindow();
+            }
         }
 
-        Intent intent = getIntent();
         if(intent.getIntExtra("placeNumber", -1) == -1) {
             locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
             locationListener = new LocationListener() {
@@ -171,7 +231,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 LatLng latLng  = new LatLng(currentUserLocation.getLatitude(), currentUserLocation.getLongitude());
-                saveLocation(latLng);
+                ShowPopup(latLng);
             }
         });
 
@@ -227,14 +287,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        saveLocation(latLng);
+        ShowPopup(latLng);
     }
 
-    public void saveLocation(LatLng latLng) {
+    public void ShowPopup(final LatLng latLng) {
+        TextView txtclose;
+        Button btnDodaj;
+        Button btnPreklici;
+        addLocationPopUp.setContentView(R.layout.add_location_popup);
+        txtclose =(TextView) addLocationPopUp.findViewById(R.id.txtclose);
+        txtclose.setText("X");
+        btnDodaj = (Button) addLocationPopUp.findViewById(R.id.btndodaj);
+        btnPreklici = (Button) addLocationPopUp.findViewById(R.id.btnpreklici);
+        txtclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addLocationPopUp.dismiss();
+            }
+        });
+        addLocationPopUp.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        addLocationPopUp.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
-        String address = "";
-        String date = "";
+        address = "";
+        date = "";
 
         try {
 
@@ -253,24 +330,61 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        TextView txtNaslov = (TextView) addLocationPopUp.findViewById(R.id.textViewNaslov);
+        txtNaslov.setText(address);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd. MM. yyyy");
         date += sdf.format(new Date());
 
+        TextView txtDate = (TextView) addLocationPopUp.findViewById(R.id.textViewDate);
+        txtDate.setText(date);
 
-        mMap.addMarker(new MarkerOptions().position(latLng).title(address));
+        editTextImeLokacije = (EditText) addLocationPopUp.findViewById(R.id.editTextImeLokacije);
+        editTextOpis = (EditText) addLocationPopUp.findViewById(R.id.editTextOpis);
+        editTextVrsteGob = (EditText) addLocationPopUp.findViewById(R.id.editTextVrsteGob);
 
-        MainActivity.places.add(address);
-        MainActivity.locations.add(latLng);
+        btnPreklici.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addLocationPopUp.dismiss();
+            }
+        });
 
-//        MainActivity.arrayAdapter.notifyDataSetChanged();
+        addLocationPopUp.setCancelable(true);
+        addLocationPopUp.setCanceledOnTouchOutside(true);
+        addLocationPopUp.show();
 
-        MainActivity.mName.add("ime-test");
-        MainActivity.mAdress.add(address);
-        MainActivity.mDate.add(date);
-        MainActivity.mVrsteGob.add("vrste-gob-test");
+        btnDodaj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextOpis.getText();
+                mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .icon(getMarkerIcon("#847862"))
+                        .title(address + " " + date)
+                        .snippet(editTextVrsteGob.getText().toString()))
+                        .showInfoWindow();
 
-        MainActivity.locationsAdapter.notifyDataSetChanged();
+                MainActivity.places.add(address);
+                MainActivity.locations.add(latLng);
 
-        Toast.makeText(this, "Lokacija je shranjena!", Toast.LENGTH_SHORT).show();
+                MainActivity.mName.add(editTextImeLokacije.getText().toString());
+                MainActivity.mAdress.add(address);
+                MainActivity.mDate.add(date);
+                MainActivity.mVrsteGob.add(editTextVrsteGob.getText().toString());
+                MainActivity.mOpisLokacije.add(editTextOpis.getText().toString());
+
+                MainActivity.locationsAdapter.notifyDataSetChanged();
+                addLocationPopUp.dismiss();
+
+                Toast.makeText(getApplicationContext(), "Lokacija je shranjena!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public BitmapDescriptor getMarkerIcon(String color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(Color.parseColor(color), hsv);
+        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
     }
 }

@@ -3,6 +3,7 @@ package tnuv.fe.uni_lj.si.gobar;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
@@ -27,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 public class InfoGobeActivity extends AppCompatActivity {
 
@@ -92,6 +95,39 @@ public class InfoGobeActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+
+        String json = gson.toJson(MainActivity.places);
+        editor.putString("places", json);
+
+        json = gson.toJson(MainActivity.locations);
+        editor.putString("locations", json);
+
+        json = gson.toJson(MainActivity.mName);
+        editor.putString("mName", json);
+
+        json = gson.toJson(MainActivity.mDate);
+        editor.putString("mDate", json);
+
+        json = gson.toJson(MainActivity.mAdress);
+        editor.putString("mAdress", json);
+
+        json = gson.toJson(MainActivity.mOpisLokacije);
+        editor.putString("mOpisLokacije", json);
+
+        json = gson.toJson(MainActivity.mVrsteGob);
+        editor.putString("mVrsteGob", json);
+
+        editor.apply();
+    }
+
     public void ShowPopup(View v) {
         TextView txtclose;
         Button btnFollow;
