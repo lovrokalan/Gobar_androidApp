@@ -6,9 +6,11 @@
         android:title="Zemljevid" />
 
     <item android:id="@+id/navigation_item_2"
+        android:icon="@drawable/outline_list_black_24dp"
         android:title="Shranjene lokacije" />
 
     <item android:id="@+id/navigation_item_3"
+        android:icon="@drawable/outline_info_black_24dp"
         android:title="Informacije o gobah" />
 
 </menu>
