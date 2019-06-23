@@ -87,37 +87,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         initInstances();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-
-        String json = gson.toJson(MainActivity.places);
-        editor.putString("places", json);
-
-        json = gson.toJson(MainActivity.locations);
-        editor.putString("locations", json);
-
-        json = gson.toJson(MainActivity.mName);
-        editor.putString("mName", json);
-
-        json = gson.toJson(MainActivity.mDate);
-        editor.putString("mDate", json);
-
-        json = gson.toJson(MainActivity.mAdress);
-        editor.putString("mAdress", json);
-
-        json = gson.toJson(MainActivity.mOpisLokacije);
-        editor.putString("mOpisLokacije", json);
-
-        json = gson.toJson(MainActivity.mVrsteGob);
-        editor.putString("mVrsteGob", json);
-
-        editor.apply();
-    }
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//
+//        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        Gson gson = new Gson();
+//
+//        String json = gson.toJson(MainActivity.places);
+//        editor.putString("places", json);
+//
+//        json = gson.toJson(MainActivity.locations);
+//        editor.putString("locations", json);
+//
+//        json = gson.toJson(MainActivity.mName);
+//        editor.putString("mName", json);
+//
+//        json = gson.toJson(MainActivity.mDate);
+//        editor.putString("mDate", json);
+//
+//        json = gson.toJson(MainActivity.mAdress);
+//        editor.putString("mAdress", json);
+//
+//        json = gson.toJson(MainActivity.mOpisLokacije);
+//        editor.putString("mOpisLokacije", json);
+//
+//        json = gson.toJson(MainActivity.mVrsteGob);
+//        editor.putString("mVrsteGob", json);
+//
+//        editor.apply();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -357,7 +357,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         btnDodaj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editTextOpis.getText();
                 mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .icon(getMarkerIcon("#847862"))
@@ -375,6 +374,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 MainActivity.mOpisLokacije.add(editTextOpis.getText().toString());
 
                 MainActivity.locationsAdapter.notifyDataSetChanged();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                Gson gson = new Gson();
+
+                String json = gson.toJson(MainActivity.places);
+                editor.putString("places", json);
+
+                json = gson.toJson(MainActivity.locations);
+                editor.putString("locations", json);
+
+                json = gson.toJson(MainActivity.mName);
+                editor.putString("mName", json);
+
+                json = gson.toJson(MainActivity.mDate);
+                editor.putString("mDate", json);
+
+                json = gson.toJson(MainActivity.mAdress);
+                editor.putString("mAdress", json);
+
+                json = gson.toJson(MainActivity.mOpisLokacije);
+                editor.putString("mOpisLokacije", json);
+
+                json = gson.toJson(MainActivity.mVrsteGob);
+                editor.putString("mVrsteGob", json);
+
+                editor.apply();
+
                 addLocationPopUp.dismiss();
 
                 Toast.makeText(getApplicationContext(), "Lokacija je shranjena!", Toast.LENGTH_SHORT).show();

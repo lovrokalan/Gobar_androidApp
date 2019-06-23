@@ -107,38 +107,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-
-        String json = gson.toJson(places);
-        editor.putString("places", json);
-
-        json = gson.toJson(locations);
-        editor.putString("locations", json);
-
-        json = gson.toJson(mName);
-        editor.putString("mName", json);
-
-        json = gson.toJson(mDate);
-        editor.putString("mDate", json);
-
-        json = gson.toJson(mAdress);
-        editor.putString("mAdress", json);
-
-        json = gson.toJson(mOpisLokacije);
-        editor.putString("mOpisLokacije", json);
-
-        json = gson.toJson(mVrsteGob);
-        editor.putString("mVrsteGob", json);
-
-        editor.apply();
-    }
-
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
         Gson gson = new Gson();
@@ -205,9 +173,6 @@ public class MainActivity extends AppCompatActivity {
 
         myDialog.setContentView(R.layout.location_details_popup);
 
-        txtclose =(TextView) myDialog.findViewById(R.id.txtcloseBtn);
-        txtclose.setText("X");
-
         textViewDate = (TextView) myDialog.findViewById(R.id.textViewDate);
         textViewDate.setText(mDate.get(locationNumber));
 
@@ -257,6 +222,33 @@ public class MainActivity extends AppCompatActivity {
                 mVrsteGob.remove(locationNumber);
 
                 locationsAdapter.notifyDataSetChanged();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                Gson gson = new Gson();
+
+                String json = gson.toJson(MainActivity.places);
+                editor.putString("places", json);
+
+                json = gson.toJson(MainActivity.locations);
+                editor.putString("locations", json);
+
+                json = gson.toJson(MainActivity.mName);
+                editor.putString("mName", json);
+
+                json = gson.toJson(MainActivity.mDate);
+                editor.putString("mDate", json);
+
+                json = gson.toJson(MainActivity.mAdress);
+                editor.putString("mAdress", json);
+
+                json = gson.toJson(MainActivity.mOpisLokacije);
+                editor.putString("mOpisLokacije", json);
+
+                json = gson.toJson(MainActivity.mVrsteGob);
+                editor.putString("mVrsteGob", json);
+
+                editor.apply();
 
                 myDialog.dismiss();
             }
