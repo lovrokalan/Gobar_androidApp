@@ -38,6 +38,7 @@ public class InfoGobeActivity extends AppCompatActivity {
 
     ListView listView;
     String mTitle[] = {"Jurčki", "Lisičke", "Mušnice", "Lesne"};
+    String latinNameArray[] = {"lalatin", "lalatin", "lalatin", "lalatin"};
     String mDescription[] = {"opis1", "opis2", "opis3", "opis4"};
     int images[]= {R.drawable.jurcki, R.drawable.lisicke, R.drawable.musnice, R.drawable.lesne};
     MyAdapter adapter;
@@ -78,19 +79,7 @@ public class InfoGobeActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position==0){
-                    Toast.makeText(InfoGobeActivity.this, "Opis Jurckov", Toast.LENGTH_SHORT).show();
-                    ShowPopup(listView);
-                }
-                if(position==1){
-                    Toast.makeText(InfoGobeActivity.this, "Opis Lisick", Toast.LENGTH_SHORT).show();
-                }
-                if(position==2){
-                    Toast.makeText(InfoGobeActivity.this, "Opis Musnic", Toast.LENGTH_SHORT).show();
-                }
-                if(position==3){
-                    Toast.makeText(InfoGobeActivity.this, "Opis Lesnih Gob", Toast.LENGTH_SHORT).show();
-                }
+                ShowPopup(listView, position);
             }
         });
 
@@ -128,14 +117,14 @@ public class InfoGobeActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void ShowPopup(View v) {
-        TextView txtclose;
-        Button btnFollow;
+    public void ShowPopup(View v, final int position) {
+        TextView name;
+        TextView latinName;
+        TextView opis;
+
         myDialog.setContentView(R.layout.popup1);
-        txtclose =(TextView) myDialog.findViewById(R.id.txtclose);
-        txtclose.setText("X");
-        btnFollow = (Button) myDialog.findViewById(R.id.btndodaj);
-        txtclose.setOnClickListener(new View.OnClickListener() {
+        ImageView imageclose = (ImageView) myDialog.findViewById(R.id.imageViewClose);
+        imageclose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 myDialog.dismiss();
@@ -143,6 +132,18 @@ public class InfoGobeActivity extends AppCompatActivity {
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        name = (TextView) myDialog.findViewById(R.id.nameText);
+        name.setText(mTitle[position]);
+
+        latinName = (TextView) myDialog.findViewById(R.id.latinNameText);
+        latinName.setText(latinNameArray[position]);
+
+        opis = (TextView) myDialog.findViewById(R.id.textOpis);
+        opis.setText(mDescription[position]);
+
+        ImageView image = myDialog.findViewById(R.id.imageView);
+        image.setImageResource(images[position]);
 
         myDialog.setCancelable(true);
         myDialog.setCanceledOnTouchOutside(true);

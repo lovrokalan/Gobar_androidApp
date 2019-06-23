@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,38 +88,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         initInstances();
     }
 
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//
-//        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        Gson gson = new Gson();
-//
-//        String json = gson.toJson(MainActivity.places);
-//        editor.putString("places", json);
-//
-//        json = gson.toJson(MainActivity.locations);
-//        editor.putString("locations", json);
-//
-//        json = gson.toJson(MainActivity.mName);
-//        editor.putString("mName", json);
-//
-//        json = gson.toJson(MainActivity.mDate);
-//        editor.putString("mDate", json);
-//
-//        json = gson.toJson(MainActivity.mAdress);
-//        editor.putString("mAdress", json);
-//
-//        json = gson.toJson(MainActivity.mOpisLokacije);
-//        editor.putString("mOpisLokacije", json);
-//
-//        json = gson.toJson(MainActivity.mVrsteGob);
-//        editor.putString("mVrsteGob", json);
-//
-//        editor.apply();
-//    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -152,6 +121,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if(intent.getIntExtra("placeNumber", -1) == i) {
                 currentMarker.showInfoWindow();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MainActivity.locations.get(i),15));
             }
         }
 
@@ -219,7 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             String address = MainActivity.places.get(intent.getIntExtra("placeNumber", 0));
 
-            centerMapOnLocation(placeLocation, MainActivity.places.get(intent.getIntExtra("placeNumber", 0)));
+            centerMapOnLocation(placeLocation, address);
             LatLng gobasLocation = new LatLng(placeLocation.getLatitude(), placeLocation.getLongitude());
             Marker currentMarker = mMap.addMarker(new MarkerOptions().position(gobasLocation).title(address));
             currentMarker.showInfoWindow();
@@ -291,15 +261,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void ShowPopup(final LatLng latLng) {
-        TextView txtclose;
+        ImageView btnclose;
         Button btnDodaj;
         Button btnPreklici;
         addLocationPopUp.setContentView(R.layout.add_location_popup);
-        txtclose =(TextView) addLocationPopUp.findViewById(R.id.txtclose);
-        txtclose.setText("X");
+        btnclose =(ImageView) addLocationPopUp.findViewById(R.id.imageViewClose);
         btnDodaj = (Button) addLocationPopUp.findViewById(R.id.btndodaj);
         btnPreklici = (Button) addLocationPopUp.findViewById(R.id.btnpreklici);
-        txtclose.setOnClickListener(new View.OnClickListener() {
+        btnclose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addLocationPopUp.dismiss();

@@ -165,13 +165,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void ShowPopup(final int locationNumber) {
         TextView textViewDate;
-        TextView txtclose;
+        ImageView closeBtn;
         TextView textViewNaslov;
         TextView textViewIme;
         TextView textViewVrste;
         TextView textViewOpis;
 
         myDialog.setContentView(R.layout.location_details_popup);
+
+        closeBtn =(ImageView) myDialog.findViewById(R.id.imageViewClose);
 
         textViewDate = (TextView) myDialog.findViewById(R.id.textViewDate);
         textViewDate.setText(mDate.get(locationNumber));
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        txtclose.setOnClickListener(new View.OnClickListener() {
+        closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 myDialog.dismiss();
